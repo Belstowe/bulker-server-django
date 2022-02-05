@@ -9,11 +9,11 @@ services:
       - mongodb
     environment:
       - DB_NAME=db-bulker
-      - DB_USERNAME=admin
-      - DB_PASSWORD=pswd1234
       - DB_HOST=mongodb
-      - DEBUG=False
-      - SECRET_KEY='@s(eis)_8ssp#ua4%0pmdc4%$vsj13nn*_r+_2*fxd!jxi0#'
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pswd1234
+      - DJANGO_DEBUG=False
+      - DJANGO_SECRET_KEY='@s(eis)_8ssp#ua4%0pmdc4%$vsj13nn*_r+_2*fxd!jxi0#'
     build:
       context: .
       dockerfile: ./Dockerfile

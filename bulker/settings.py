@@ -26,12 +26,12 @@ load_dotenv(dotenv_path)
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = environ.get('SECRET_KEY')
+SECRET_KEY = environ.get('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = environ.get('DEBUG', False)
+DEBUG = environ.get('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = [environ.get('HOST', '127.0.0.1')]
+ALLOWED_HOSTS = [environ.get('HOST', 'localhost')]
 
 # Application definition
 
@@ -87,8 +87,8 @@ DATABASES = {
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb://{username}:{password}@{hostname}:{port}'.format(
-                username=environ.get('DB_USERNAME', 'user'),
-                password=environ.get('DB_PASSWORD', 'password'),
+                username=environ.get('MONGO_INITDB_ROOT_USERNAME', 'user'),
+                password=environ.get('MONGO_INITDB_ROOT_PASSWORD', 'password'),
                 hostname=environ.get('DB_HOST', 'localhost'),
                 port=environ.get('DB_PORT', '27017')
             )
