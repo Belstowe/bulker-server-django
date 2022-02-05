@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  app:
+    image: bulker
+    volumes:
+      - .:/code
+    depends_on:
+      - mongodb
+    environment:
+      - DB_NAME=db-bulker
+      - DB_USERNAME=admin
+      - DB_PASSWORD=pswd1234
+      - DB_HOST=mongodb
+      - DEBUG=False
+      - SECRET_KEY='@s(eis)_8ssp#ua4%0pmdc4%$vsj13nn*_r+_2*fxd!jxi0#'
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+    ports:
+      - 8000:8000
+
+  mongodb:
+    image: mongo:5.0.6
+    volumes:
+    - ./data/db:/var/lib/mongodb/data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pswd1234

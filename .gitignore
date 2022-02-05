@@ -146,3 +146,6 @@ cython_debug/
 
 # SQlite3 DB
 *.sqlite3
+
+# Visual Studio Code
+.vscode/
