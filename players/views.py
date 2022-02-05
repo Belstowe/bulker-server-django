@@ -28,3 +28,9 @@ class PlayersView(APIView):
             data=serializer_write.data,
             status=status.HTTP_201_CREATED
         )
+        
+    def delete(self, request):
+        Player.objects.all().delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
