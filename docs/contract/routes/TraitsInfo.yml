@@ -1,0 +1,130 @@
+##############################
+# Players' traits: get names #
+##############################
+Traits:
+  # GET /Traits
+  get:
+    description: Returns all player traits' names
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+
+######################################
+# Traits of player {id}: get details #
+######################################
+PlayersIDTraits:
+  # GET /Players/{id}/Traits
+  get:
+    description: Returns traits of the player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../openapi.yml#/components/schemas/Trait'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+###################################################################
+# Trait {codename} of player {id}: get details, update, randomize #
+###################################################################
+PlayersIDTraitsCodename:
+  # GET /Players/{id}/Traits/{codename}
+  get:
+    description: Returns details of trait {codename} of player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Trait'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # PUT /Players/{id}/Traits/{codename}
+  put:
+    description: Updates trait {codename} of player {id}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yml#/components/schemas/Trait'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Players/{id}/Traits/{codename}
+  delete:
+    description: Randomizes trait {codename} of player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Trait'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'

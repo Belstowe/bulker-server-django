@@ -1,0 +1,71 @@
+Error:
+  type: object
+  required:
+    - code
+    - message
+  properties:
+    code:
+      type: string
+    message:
+      type: string
+
+Player:
+  type: object
+  required:
+    - name
+  properties:
+    id:
+      type: string
+      format: uuid
+      readOnly: true
+    dateCreated:
+      type: string
+      format: date-time
+      readOnly: true
+    name:
+      type: string
+    isAlive:
+      type: boolean
+    age:
+      type: integer
+    gender:
+      type: string
+      enum: [male, female]
+    isFertile:
+      type: boolean
+    votedFor:
+      type: string
+      format: uuid
+      nullable: true
+    voteSpree:
+      $ref: '#/VoteSpree'
+    traits:
+      type: array
+      items:
+        $ref: '#/Trait'
+
+Event:
+  type: string
+  nullable: true
+
+Trait:
+  type: object
+  required:
+    - codename
+  properties:
+    codename:
+      type: string
+      readOnly: true
+    name:
+      type: string
+      readOnly: true
+    value:
+      type: array
+      items:
+        type: string
+
+VoteSpree:
+  type: array
+  items:
+    type: string
+    format: uuid

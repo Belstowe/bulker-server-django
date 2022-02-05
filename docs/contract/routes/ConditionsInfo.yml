@@ -1,0 +1,84 @@
+###########################
+# Conditions: get details #
+###########################
+Conditions:
+  # GET /Conditions
+  get:
+    description: Returns all world conditions (global traits)
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../openapi.yml#/components/schemas/Trait'
+
+########################################################
+# Condition {codename}: get details, update, randomize #
+########################################################
+ConditionsCodename:         
+  # GET /Conditions/{codename}
+  get:
+    description: Returns details of condition {codename}
+    parameters:
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Trait'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # PUT /Conditions/{codename}
+  put:
+    description: Updates condition {codename}
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yml#/components/schemas/Trait'
+    parameters:
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '204':
+        description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Conditions/{codename}
+  delete:
+    description: Randomizes condition {codename}
+    parameters:
+      - name: codename
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Trait'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'

@@ -1,0 +1,108 @@
+##########################################################
+# Players: get info, add a new record, clear all records #
+##########################################################
+Players:
+  # GET /Players
+  get:
+    description: Returns all player traits
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '../openapi.yml#/components/schemas/Player'
+
+  # POST /Players
+  post:
+    description: Adds a new player record
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yml#/components/schemas/Player'
+    responses:
+      '200':
+        description: Successfully created a new player
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Player'
+
+  # DELETE /Players
+  delete:
+    description: Clears up completely all players' records
+    responses:
+      '204':
+        description: Successfully cleared up players' list
+
+###############################################################
+# Player {id}: get info, update the record, delete the record #
+###############################################################
+PlayersID:
+  # GET /Players/{id}
+  get:
+    description: Returns details about the player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/Player'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # PUT /Players/{id}
+  put:
+    description: Updates the player {id}; not all fields are required
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yml#/components/schemas/Player'
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Players/{id}
+  delete:
+    description: Deletes the player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+

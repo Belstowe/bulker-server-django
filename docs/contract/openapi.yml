@@ -1,0 +1,76 @@
+openapi: '3.0.3'
+
+info:
+  version: '1.0.1'
+  title: Bulker RESTful service
+  description: A simple API for a moderator in Bulker game.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://localhost:8000/api/v1/
+    description: local
+
+security:
+  - BasicAuth: []
+
+paths:
+  # Players: get info, add a new record, clear all records
+  /Players:
+    $ref: "routes/PlayersInfo.yml#Players"
+  # Player {id}: get info, update the record, delete the record
+  /Players/{id}:
+    $ref: "routes/PlayersInfo.yml#PlayersID"
+
+  # Conditions: get details
+  /Conditions:
+    $ref: "routes/ConditionsInfo.yml#Conditions"
+  # Condition {codename}: get details, update, randomize
+  /Conditions/{codename}:
+    $ref: "routes/ConditionsInfo.yml#ConditionsCodename"
+
+  # Players' traits: get names
+  /Traits:
+    $ref: "routes/TraitsInfo.yml#Traits"
+  # Traits of player {id}: get details
+  /Players/{id}/Traits:
+    $ref: "routes/TraitsInfo.yml#PlayersIDTraits"
+  # Trait {codename} of player {id}: get details, update, randomize
+  /Players/{id}/Traits/{codename}:
+    $ref: "routes/TraitsInfo.yml#PlayersIDTraitsCodename"
+
+  # Votes: clear all votes
+  /Votes:
+    $ref: "routes/VotesInfo.yml#Votes"
+  # Votes for player {id}: get vote spree, clear all votes
+  /Players/{id}/Votes:
+    $ref: "routes/VotesInfo.yml#PlayersIDVotes"
+  # Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one), vote cancellation
+  /Players/{subjectid}/Vote/{objectid}:
+    $ref: "routes/VotesInfo.yml#PlayersIDVoteID"
+
+  # Event: get a new event
+  /Event:
+    $ref: "routes/EventInfo.yml"
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+  schemas:
+    $ref: "components.yml"
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InvalidRequest:
+      description: A request didn't follow a specification (ex. got a string field instead of integer)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

@@ -1,0 +1,10 @@
+# GET /Event
+get:
+  description: Next round shift; a new event
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '../openapi.yml#/components/schemas/Event'

@@ -1,0 +1,115 @@
+##########################
+# Votes: clear all votes #
+##########################
+/Votes:
+  # DELETE /Votes
+  delete:
+    description: Resets all vote sprees and 'votedFor' pointers for players
+    responses:
+      '204':
+        description: OK
+
+##########################################################
+# Votes for player {id}: get vote spree, clear all votes #
+##########################################################
+PlayersIDVotes:
+  # GET /Players/{id}/Votes
+  get:
+    description: Returns vote spree of the player {id}
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/VoteSpree'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Players/{id}/Votes
+  delete:
+    description: Cleans vote spree of the player {id} (and consequentially cleans 'votedFor' pointer for players in that spree)
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '204':
+        description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+#####################################################################################################################
+# Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one), vote cancellation #
+#####################################################################################################################
+PlayersIDVoteID:
+  # PUT /Players/{subjectid}/Vote/{objectid}
+  put:
+    description: Puts vote of player {subjectid} on player {objectid}; updates 'votedFor' pointer for {subjectid}, adds {subjectid} in vote spree of {objectid} (and returns it)
+    parameters:
+      - name: subjectid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: objectid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/VoteSpree'
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Players/{subjectid}/Vote/{objectid}
+  delete:
+    description: Removes vote of player {subjectid} on player {objectid}; nullifies 'votedFor' pointer for {subjectid}, deletes {subjectid} in vote spree of {objectid} (and returns it, if {objectid} is given)
+    parameters:
+      - name: subjectid
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: objectid
+        in: path
+        schema:
+          type: string
+          format: uuid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: '../openapi.yml#/components/schemas/VoteSpree'
+      '204':
+        description: No Content
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
