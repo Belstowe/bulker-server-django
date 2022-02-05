@@ -11,22 +11,27 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from os import environ
+from os.path import join, dirname
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Read env vars from file
+dotenv_path = join(dirname(__file__), '../.env')
+load_dotenv(dotenv_path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=@s(eis)_8ssp#ua4%0=pmdc4%$vsj13nn*_r+_2*fxd!jxi0#'
+SECRET_KEY = environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = environ.get('DEBUG', False)
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [environ.get('HOST', '127.0.0.1')]
 
 # Application definition
 
@@ -77,8 +82,17 @@ WSGI_APPLICATION = 'bulker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': environ.get('DB_NAME', 'db-bulker'),
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb://{username}:{password}@{hostname}:{port}'.format(
+                username=environ.get('DB_USERNAME', 'user'),
+                password=environ.get('DB_PASSWORD', 'password'),
+                hostname=environ.get('DB_HOST', 'localhost'),
+                port=environ.get('DB_PORT', '27017')
+            )
+        }
     }
 }
 
