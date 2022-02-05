@@ -3,5 +3,6 @@ from .views import *
 
 app_name = 'Players'
 urlpatterns = [
-    path('Players/', PlayersView.as_view())
+    path('Players/', PlayersView.as_view()),
+    path('Players/<uuid:pk>/', PlayersDetail.as_view())
 ]
