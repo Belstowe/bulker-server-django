@@ -3,10 +3,10 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 
 from rest_framework import status
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+import json
 from .models import Player
 from .serializers import PlayerSerializer, VotedSerializer, GotVotedSerializer
 
@@ -84,6 +84,41 @@ class PlayersDetail(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         record.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class PlayerVotes(APIView):
+    subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
+    model = Player
+    
+    def get(self, request, pk):
+        try:
+            record = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return JsonResponse(
+                {'message': f"Couldn't find a player record by id {pk}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer_get = self.object_serializer(record)
+        return Response(
+            serializer_get.data,
+            status=status.HTTP_200_OK
+        )
+        
+    def delete(self, request, pk):
+        player_list = self.model.objects.filter(votedfor=pk)
+        for player in player_list:
+            serializer_clear = self.subject_serializer(
+                player, 
+                data={ 'votedfor': None }
+            )
+            if not serializer_clear.is_valid():
+                return Response(
+                    serializer_clear.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            serializer_clear.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PlayerVote(APIView):
