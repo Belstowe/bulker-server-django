@@ -3,10 +3,6 @@ from rest_framework import serializers
 from .models import Player
 
 class PlayerSerializer(serializers.ModelSerializer):
-    #name = serializers.CharField(max_length=256)
-    #age = serializers.IntegerField()
-    #gender = serializers.CharField(max_length=1)
-    
     class Meta:
         model = Player
         fields = ('id', 'date', 'name', 'age', 'gender')
@@ -17,5 +13,26 @@ class PlayerSerializer(serializers.ModelSerializer):
             },
             'gender': {
                 'required': False
+            }
+        }
+        
+class GotVotedSerializer(serializers.ModelSerializer):
+    votespree = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='id'
+    )
+    
+    class Meta:
+        model = Player
+        fields = ['votespree']
+        
+class VotedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ['votedfor']
+        extra_kwargs = {
+            'votedfor': {
+                'allow_null': True
             }
         }

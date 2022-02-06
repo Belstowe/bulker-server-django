@@ -1,3 +1,4 @@
+from django.forms import JSONField
 from django.shortcuts import render
 from django.http.response import JsonResponse
 
@@ -7,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Player
-from .serializers import PlayerSerializer
+from .serializers import PlayerSerializer, VotedSerializer, GotVotedSerializer
 
 class PlayersView(APIView):
     serializer_class = PlayerSerializer
@@ -84,3 +85,67 @@ class PlayersDetail(APIView):
             )
         record.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class VoteFor(APIView):
+    subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
+    subject_model, object_model = Player, Player
+        
+    def put(self, request, subjpk, objpk):
+        try:
+            subject_record = self.subject_model.objects.get(pk=subjpk)
+        except self.subject_model.DoesNotExist:
+            return JsonResponse(
+                {'message': f"Couldn't find a player record by id {subjpk}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            object_record = self.object_model.objects.get(pk=objpk)
+        except self.object_model.DoesNotExist:
+            return JsonResponse(
+                {'message': f"Couldn't find a player record by id {objpk}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        serializer_change = self.subject_serializer(
+            subject_record, 
+            data={ 'votedfor': objpk }
+        )
+        if not serializer_change.is_valid():
+            return Response(
+                serializer_change.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer_change.save()
+
+        serializer_get = self.object_serializer(object_record)
+        return Response(
+            serializer_get.data,
+            status=status.HTTP_200_OK
+        )
+        
+    def delete(self, request, subjpk, objpk):
+        try:
+            subject_record = self.subject_model.objects.get(pk=subjpk)
+        except self.subject_model.DoesNotExist:
+            return JsonResponse(
+                {'message': f"Couldn't find a player record by id {subjpk}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        object_record = subject_record.votedfor
+        
+        serializer_clear = self.subject_serializer(
+            subject_record, 
+            data={ 'votedfor': None }
+        )
+        if not serializer_clear.is_valid():
+            return Response(
+                serializer_clear.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        serializer_clear.save()
+
+        serializer_get = self.object_serializer(object_record)
+        return Response(
+            serializer_get.data,
+            status=status.HTTP_200_OK
+        )
