@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 import json
 from .models import Player
-from .serializers import PlayerSerializer, VotedSerializer, GotVotedSerializer
+from .serializers import PlayerSerializer, VotedForSerializer, VotedBySerializer
 
 class PlayersView(APIView):
     serializer_class = PlayerSerializer
@@ -37,7 +37,7 @@ class PlayersView(APIView):
         self.model.objects.all().delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class PlayersDetail(APIView):
+class PlayerDetail(APIView):
     serializer_class = PlayerSerializer
     model = Player
     
@@ -86,8 +86,8 @@ class PlayersDetail(APIView):
         record.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class PlayerVotes(APIView):
-    subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
+class PlayerVotedBy(APIView):
+    subject_serializer, object_serializer = VotedForSerializer, VotedBySerializer
     model = Player
     
     def get(self, request, pk):
@@ -121,14 +121,14 @@ class PlayerVotes(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class PlayerVote(APIView):
-    subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
-    subject_model, object_model = Player, Player
+class PlayerVotedFor(APIView):
+    subject_serializer, object_serializer = VotedForSerializer, VotedBySerializer
+    model = Player
     
     def get(self, request, pk):
         try:
-            record = self.subject_model.objects.get(pk=pk)
-        except self.subject_model.DoesNotExist:
+            record = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
             return JsonResponse(
                 {'message': f"Couldn't find a player record by id {pk}"},
                 status=status.HTTP_404_NOT_FOUND
@@ -146,8 +146,8 @@ class PlayerVote(APIView):
     
     def delete(self, request, pk):
         try:
-            subject_record = self.subject_model.objects.get(pk=pk)
-        except self.subject_model.DoesNotExist:
+            subject_record = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
             return JsonResponse(
                 {'message': f"Couldn't find a player record by id {pk}"},
                 status=status.HTTP_404_NOT_FOUND
@@ -172,20 +172,20 @@ class PlayerVote(APIView):
         )
 
 class PlayerVoteFor(APIView):
-    subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
-    subject_model, object_model = Player, Player
+    subject_serializer, object_serializer = VotedForSerializer, VotedBySerializer
+    model = Player, Player
         
     def put(self, request, subjpk, objpk):
         try:
-            subject_record = self.subject_model.objects.get(pk=subjpk)
-        except self.subject_model.DoesNotExist:
+            subject_record = self.model.objects.get(pk=subjpk)
+        except self.model.DoesNotExist:
             return JsonResponse(
                 {'message': f"Couldn't find a player record by id {subjpk}"},
                 status=status.HTTP_404_NOT_FOUND
             )
         try:
-            object_record = self.object_model.objects.get(pk=objpk)
-        except self.object_model.DoesNotExist:
+            object_record = self.model.objects.get(pk=objpk)
+        except self.model.DoesNotExist:
             return JsonResponse(
                 {'message': f"Couldn't find a player record by id {objpk}"},
                 status=status.HTTP_404_NOT_FOUND
@@ -224,7 +224,7 @@ class ClearVotes(APIView):
         player_list = self.model.objects.filter(votedfor__isnull=False)
         
         for player in player_list:
-            serializer_clear = VotedSerializer(
+            serializer_clear = VotedForSerializer(
                 player, 
                 data={ 'votedfor': None }
             )

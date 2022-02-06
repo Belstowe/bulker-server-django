@@ -24,7 +24,7 @@ class PlayerSerializer(serializers.ModelSerializer):
     def get_fertile(self, obj):
         return obj.is_fertile()
         
-class GotVotedSerializer(serializers.ModelSerializer):
+class VotedBySerializer(serializers.ModelSerializer):
     votespree = serializers.SlugRelatedField(
         many=True,
         read_only=True,
@@ -35,7 +35,7 @@ class GotVotedSerializer(serializers.ModelSerializer):
         model = Player
         fields = ['votespree']
         
-class VotedSerializer(serializers.ModelSerializer):
+class VotedForSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
         fields = ['votedfor']
