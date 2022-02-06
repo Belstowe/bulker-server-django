@@ -40,6 +40,9 @@ paths:
   /Players/{id}/Traits/{codename}:
     $ref: "routes/TraitsInfo.yml#PlayersIDTraitsCodename"
 
+  # Did all players vote?
+  /AllVoted:
+    $ref: "routes/VotesInfo.yml#AllVoted"
   # Votes: clear all votes
   /Votes:
     $ref: "routes/VotesInfo.yml#Votes"

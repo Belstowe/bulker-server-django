@@ -1,5 +1,8 @@
 # Bulker Contract: changelog
 
+## 1.0.3 (06.02.2022)
+* Added new service `GET /AllVoted` for flag, did all players vote?
+
 ## 1.0.2 (06.02.2022)
 <ul>
 <li>Added new service `GET /Players/{id}/Vote` (gives out the player, whom Player `{id}` voted for, if one exists);</li>

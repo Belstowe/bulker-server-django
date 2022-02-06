@@ -1,7 +1,22 @@
+#########################
+# Did all players vote? #
+#########################
+AllVoted:
+  # GET /AllVoted
+  get:
+    description: Returns 'True' if all players voted; otherwise 'False'
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: boolean
+
 ##########################
 # Votes: clear all votes #
 ##########################
-/Votes:
+Votes:
   # DELETE /Votes
   delete:
     description: Resets all vote sprees and 'votedFor' pointers for players
