@@ -1,7 +1,7 @@
 openapi: '3.0.3'
 
 info:
-  version: '1.0.1'
+  version: '1.0.2'
   title: Bulker RESTful service
   description: A simple API for a moderator in Bulker game.
   license:
@@ -46,7 +46,10 @@ paths:
   # Votes for player {id}: get vote spree, clear all votes
   /Players/{id}/Votes:
     $ref: "routes/VotesInfo.yml#PlayersIDVotes"
-  # Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one), vote cancellation
+  # Vote of player {id}: get, cancel
+  /Players/{id}/Vote:
+    $ref: "routes/VotesInfo.yml#PlayersIDVote"
+  # Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one)
   /Players/{subjectid}/Vote/{objectid}:
     $ref: "routes/VotesInfo.yml#PlayersIDVoteID"
 

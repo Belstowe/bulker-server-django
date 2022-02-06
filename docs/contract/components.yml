@@ -24,21 +24,15 @@ Player:
       readOnly: true
     name:
       type: string
-    isAlive:
+    is_alive:
       type: boolean
     age:
       type: integer
     gender:
       type: string
       enum: [male, female]
-    isFertile:
+    fertile:
       type: boolean
-    votedFor:
-      type: string
-      format: uuid
-      nullable: true
-    voteSpree:
-      $ref: '#/VoteSpree'
     traits:
       type: array
       items:

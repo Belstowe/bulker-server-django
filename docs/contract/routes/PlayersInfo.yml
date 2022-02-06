@@ -54,8 +54,8 @@ PlayersID:
           type: string
           format: uuid
     responses:
-      '200':
-        description: OK
+      '201':
+        description: Created record
         content:
           application/json:
             schema:

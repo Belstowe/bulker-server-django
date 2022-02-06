@@ -3,11 +3,16 @@ from rest_framework import serializers
 from .models import Player
 
 class PlayerSerializer(serializers.ModelSerializer):
+    fertile = serializers.SerializerMethodField()
+    
     class Meta:
         model = Player
-        fields = ('id', 'date', 'name', 'age', 'gender')
-        read_only_fields = ('id', 'date')
+        fields = ('id', 'date', 'name', 'is_alive', 'age', 'gender', 'fertile')
+        read_only_fields = ('id', 'date', 'fertile')
         extra_kwargs = {
+            'is_alive': {
+                'required': False
+            },
             'age': {
                 'required': False
             },
@@ -15,6 +20,9 @@ class PlayerSerializer(serializers.ModelSerializer):
                 'required': False
             }
         }
+        
+    def get_fertile(self, obj):
+        return obj.is_fertile()
         
 class GotVotedSerializer(serializers.ModelSerializer):
     votespree = serializers.SlugRelatedField(

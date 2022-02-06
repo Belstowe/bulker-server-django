@@ -53,13 +53,13 @@ PlayersIDVotes:
       '404':
         $ref: '../openapi.yml#/components/responses/NotFound'
 
-#####################################################################################################################
-# Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one), vote cancellation #
-#####################################################################################################################
+##################################################################################################
+# Vote of player {subjectid} for player {objectid}: give a vote (with clearing the previous one) #
+##################################################################################################
 PlayersIDVoteID:
   # PUT /Players/{subjectid}/Vote/{objectid}
   put:
-    description: Puts vote of player {subjectid} on player {objectid}; updates 'votedFor' pointer for {subjectid}, adds {subjectid} in vote spree of {objectid} (and returns it)
+    description: Puts vote of player {subjectid} on player {objectid}; returns vote spree of {objectid}
     parameters:
       - name: subjectid
         in: path
@@ -85,18 +85,42 @@ PlayersIDVoteID:
       '404':
         $ref: '../openapi.yml#/components/responses/NotFound'
 
-  # DELETE /Players/{subjectid}/Vote/{objectid}
-  delete:
-    description: Removes vote of player {subjectid} on player {objectid}; nullifies 'votedFor' pointer for {subjectid}, deletes {subjectid} in vote spree of {objectid} (and returns it, if {objectid} is given)
+####################################
+# Vote of player {id}: get, cancel #
+####################################
+PlayerIDVote:
+  # GET /Players/{subjectid}/Vote
+  get:
+    description: Gets id of the player, whom player {id} voted for
     parameters:
-      - name: subjectid
+      - name: id
         in: path
         required: true
         schema:
           type: string
           format: uuid
-      - name: objectid
+    responses:
+      '200':
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: string
+              format: uuid
+      '204':
+        description: No Content
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
+      '404':
+        $ref: '../openapi.yml#/components/responses/NotFound'
+
+  # DELETE /Players/{subjectid}/Vote
+  delete:
+    description: Removes vote of player {id}; returns vote spree of former voted player
+    parameters:
+      - name: id
         in: path
+        required: true
         schema:
           type: string
           format: uuid

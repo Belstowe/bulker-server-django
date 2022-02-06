@@ -19,6 +19,7 @@ class Player(models.Model):
     id = models.UUIDField(verbose_name='ID', primary_key=True, db_index=True, default=uuid.uuid4, editable=False)
     date = models.DateTimeField(verbose_name='Date Created', auto_now_add=True, editable=False)
     name = models.CharField(verbose_name='Name', max_length=256)
+    is_alive = models.BooleanField(verbose_name='Is Alive?', default=True)
     age = models.IntegerField(verbose_name='Age', default=generate_age)
     gender = models.CharField(verbose_name='Gender', max_length=1, choices=GENDER_CHOICES, default=generate_gender)
     votedfor = models.ForeignKey('self', verbose_name='Voted for', on_delete=models.SET_NULL, related_name='votespree', null=True, blank=True)
