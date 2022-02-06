@@ -91,7 +91,7 @@ PlayersIDVoteID:
 PlayerIDVote:
   # GET /Players/{subjectid}/Vote
   get:
-    description: Gets id of the player, whom player {id} voted for
+    description: Gets the player, whom player {id} voted for (if there is one)
     parameters:
       - name: id
         in: path
@@ -105,8 +105,7 @@ PlayerIDVote:
         content:
           application/json:
             schema:
-              type: string
-              format: uuid
+              $ref: '../openapi.yml#/components/schemas/Player'
       '204':
         description: No Content
       '400':
@@ -131,8 +130,6 @@ PlayerIDVote:
           application/json:
             schema:
               $ref: '../openapi.yml#/components/schemas/VoteSpree'
-      '204':
-        description: No Content
       '400':
         $ref: '../openapi.yml#/components/responses/InvalidRequest'
       '404':

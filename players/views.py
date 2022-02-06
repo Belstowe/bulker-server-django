@@ -86,9 +86,28 @@ class PlayersDetail(APIView):
         record.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class PlayerVoteCancel(APIView):
+class PlayerVote(APIView):
     subject_serializer, object_serializer = VotedSerializer, GotVotedSerializer
     subject_model, object_model = Player, Player
+    
+    def get(self, request, pk):
+        try:
+            record = self.subject_model.objects.get(pk=pk)
+        except self.subject_model.DoesNotExist:
+            return JsonResponse(
+                {'message': f"Couldn't find a player record by id {pk}"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        object_record = record.votedfor
+        
+        if object_record is None:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        serializer_get = PlayerSerializer(object_record)
+        return Response(
+            serializer_get.data,
+            status=status.HTTP_200_OK
+        )
     
     def delete(self, request, pk):
         try:
