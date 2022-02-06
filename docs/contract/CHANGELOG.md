@@ -1,7 +1,8 @@
 # Bulker Contract: changelog
 
 ## 1.0.3 (06.02.2022)
-* Added new service `GET /AllVoted` for flag, did all players vote?
+* Added new service `GET /AllVoted` for flag, did all players vote;
+* `DELETE /Votes`: Added possible response `400 Bad Response`.
 
 ## 1.0.2 (06.02.2022)
 <ul>

@@ -23,6 +23,8 @@ Votes:
     responses:
       '204':
         description: OK
+      '400':
+        $ref: '../openapi.yml#/components/responses/InvalidRequest'
 
 ##########################################################
 # Votes for player {id}: get vote spree, clear all votes #

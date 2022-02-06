@@ -207,3 +207,32 @@ class PlayerVoteFor(APIView):
             serializer_get.data,
             status=status.HTTP_200_OK
         )
+        
+class AllVoted(APIView):
+    model = Player
+        
+    def get(self, request):
+        return Response(
+            len(self.model.objects.filter(votedfor=None)) == 0,
+            status=status.HTTP_200_OK
+        )
+        
+class ClearVotes(APIView):
+    model = Player
+    
+    def delete(self, request):
+        player_list = self.model.objects.filter(votedfor__isnull=False)
+        
+        for player in player_list:
+            serializer_clear = VotedSerializer(
+                player, 
+                data={ 'votedfor': None }
+            )
+            if not serializer_clear.is_valid():
+                return Response(
+                    serializer_clear.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            serializer_clear.save()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
