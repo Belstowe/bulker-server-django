@@ -178,7 +178,7 @@ class PlayerVotedFor(APIView):
 
 class PlayerVoteFor(APIView):
     subject_serializer, object_serializer = VotedForSerializer, VotedBySerializer
-    model = Player, Player
+    model = Player
 
     def put(self, request, subjpk, objpk):
         try:
