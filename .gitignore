@@ -147,5 +147,8 @@ cython_debug/
 # SQlite3 DB
 *.sqlite3
 
+# MongoDB
+/data/db
+
 # Visual Studio Code
 .vscode/
