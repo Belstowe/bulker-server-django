@@ -27,7 +27,7 @@ def main(interactive):
             
     for required_key in default_env_dict.keys():
         if env_dict.get(required_key) == None:
-            if interactive:
+            if interactive == True:
                 print(f'The key {required_key} is undefined. Please input a value (or leave empty for default: {default_env_dict[required_key]!r}):')
                 new_value = input() or default_env_dict[required_key]
             else:
@@ -40,6 +40,7 @@ def main(interactive):
             f.write(f'{key}={value}\n')
             
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        interactive = True
+    interactive = True
+    if len(sys.argv) >= 2:
+        interactive = sys.argv[1]
     main(interactive)
