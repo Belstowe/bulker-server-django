@@ -8,12 +8,10 @@ services:
     depends_on:
       - mongodb
     environment:
-      - DB_NAME=db-bulker
       - DB_HOST=mongodb
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=pswd1234
       - DJANGO_DEBUG=False
-      - DJANGO_SECRET_KEY='@s(eis)_8ssp#ua4%0pmdc4%$vsj13nn*_r+_2*fxd!jxi0#'
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -24,7 +22,6 @@ services:
   mongodb:
     image: mongo:5.0.6
     volumes:
-    - ./data/db:/var/lib/mongodb/data
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=admin
-      - MONGO_INITDB_ROOT_PASSWORD=pswd1234
+      - ./data/db:/var/lib/mongodb/data
+    env_file:
+      - .env
