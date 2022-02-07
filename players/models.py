@@ -4,6 +4,7 @@ import uuid
 from random import randint, choice
 from django.db import models
 
+
 class Player(models.Model):
     GENDER_CHOICES = (
         ('M', 'Male'),
@@ -12,7 +13,7 @@ class Player(models.Model):
 
     def generate_age():
         return randint(16, 75)
-    
+
     def generate_gender():
         return choice(('M', 'F'))
 
@@ -23,7 +24,7 @@ class Player(models.Model):
     age = models.IntegerField(verbose_name='Age', default=generate_age)
     gender = models.CharField(verbose_name='Gender', max_length=1, choices=GENDER_CHOICES, default=generate_gender)
     votedfor = models.ForeignKey('self', verbose_name='Voted for', on_delete=models.SET_NULL, related_name='votespree', null=True, blank=True)
-    
+
     class Meta:
         verbose_name_plural = 'Players'
         verbose_name = 'Player'
