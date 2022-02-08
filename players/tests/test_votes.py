@@ -165,3 +165,19 @@ class PlayerVotedByTest(TestCase):
             })
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_allvoted_get(self):
+        response = client.get(reverse('Players:all_voted'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, False)
+        self.quatro.votedfor = self.dos
+        self.quatro.save()
+        response = client.get(reverse('Players:all_voted'))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, True)
+
+    def test_clearvotes_delete(self):
+        response = client.delete(reverse('Players:clear_votes'))
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        for player in Player.objects.all():
+            self.assertEqual(player.votedfor, None)
