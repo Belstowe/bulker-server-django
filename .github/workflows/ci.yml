@@ -120,7 +120,7 @@ jobs:
           --set user=${{ secrets.DB_USER }}
           --set password=${{ secrets.DB_PASSWORD }}
           --set host=${{ secrets.DB_HOST }}
-          --set port=${{ secrets.DB_PORT }}
+          --set-string port=${{ secrets.DB_PORT }}
           --set name=${{ secrets.DB_NAME }}
           --wait
           --atomic
