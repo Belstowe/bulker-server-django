@@ -1,0 +1,10 @@
+apiVersion: v2
+kind: Service
+metadata:
+  name: bulker-service
+spec:
+  selector:
+    domain: bulker-django-backend
+  ports:
+    - port: 8000
+      targetPort: 8000

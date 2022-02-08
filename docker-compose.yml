@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: bulker
+    image: bulker-django-backend
     volumes:
       - .:/code
     depends_on:

@@ -1,0 +1,103 @@
+name: Django CD (Docker/Kubernetes) Workflow
+
+# Triggers that workflow on push to 'main'/'develop' branch
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+jobs:
+  package-job:
+    runs-on: ubuntu-20.04
+    needs: [health-check-job]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build & Publish Image
+        uses: docker/build-push-action@v1
+        env:
+          app_name: bulker-django-backend
+        with:
+          username: _json_key
+          password: ${{ secrets.GKE_PASSWORD }}
+          registry: gcr.io
+          repository: ${{ secrets.GKE_PROJECT }}/bulker-django-backend
+          tag_with_sha: true
+
+  mongodb-deploy-job:
+    runs-on: ubuntu-20.04
+    needs: [health-check-job]
+    steps:
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '371.0.0'
+          service_account_email: ${{ secrets.GKE_EMAIL }}
+          service_account_key: ${{ secrets.GKE_PASSWORD }}
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+      - name: Helm Add Bitnami Repo
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+      - name: Connect to Kubernetes cluster
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GKE_PROJECT }}
+      - name: Helm Deploy
+        run: >
+          helm upgrade
+          --install mongodb bitnami/mongodb
+          --set image.tag=5.0.6-debian-10-r10
+          --set architecture="replicaset"
+          --set auth.rootUser=${{ secrets.DB_USER }}
+          --set auth.rootPassword=${{ secrets.DB_PASSWORD }}
+          --set service.port=${{ secrets.DB_PORT }}
+
+  bulker-deploy-job:
+    runs-on: ubuntu-20.04
+    needs: [package-job, mongodb-deploy-job]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: '371.0.0'
+          service_account_email: ${{ secrets.GKE_EMAIL }}
+          service_account_key: ${{ secrets.GKE_PASSWORD }}
+      - name: Set Repo Location
+        id: repo
+        run: echo "::set-output name=repo_name::gcr.io/${{secrets.GKE_PROJECT}}/bulker-django-backend:sha-$(git rev-parse --short HEAD)"
+      - name: Check Repo Location
+        run: echo ${{ steps.repo.outputs.repo_name }}
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+      - name: Connect to Kubernetes cluster
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GKE_PROJECT }}
+      - name: Obtain MongoDB service's hostname
+        run: |
+          echo "::set-output name=DB_HOST::$(kubectl get -o yaml svc mongodb | grep clusterIP: | awk '{print $2}')"
+        id: db-host
+      - name: Helm Deploy
+        run: >
+          helm upgrade
+          --install
+          --set image=${{ steps.repo.outputs.repo_name }}
+          --set user=${{ secrets.DB_USER }}
+          --set password=${{ secrets.DB_PASSWORD }}
+          --set host=${{ steps.db-host.outputs.DB_HOST }}
+          --set port=${{ secrets.DB_PORT }}
+          --set name=${{ secrets.DB_NAME }}
+          --wait
+          --atomic
+          bulker-django-backend
+          ./charts
+      - name: Check pods
+        run: kubectl get pods
