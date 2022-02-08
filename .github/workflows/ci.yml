@@ -86,45 +86,9 @@ jobs:
           repository: ${{ secrets.GKE_PROJECT }}/bulker-django-backend
           tag_with_sha: true
 
-  mongodb-deploy-job:
-    runs-on: ubuntu-20.04
-    needs: [health-check-job]
-    if: ${{ github.event_name == 'push' }}
-    steps:
-      - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
-        with:
-          version: '371.0.0'
-          service_account_email: ${{ secrets.GKE_EMAIL }}
-          service_account_key: ${{ secrets.GKE_PASSWORD }}
-      - name: Install Helm
-        run: |
-          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-          chmod 700 get_helm.sh
-          ./get_helm.sh
-      - name: Helm Add Bitnami Repo
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-      - name: Connect to Kubernetes cluster
-        run: |
-          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GKE_PROJECT }}
-      - name: Helm Deploy
-        run: >
-          helm upgrade
-          --install mongodb bitnami/mongodb
-          --set image.tag=5.0.6-debian-10-r10
-          --set architecture="replicaset"
-          --set auth.rootUser=${{ secrets.DB_USER }}
-          --set auth.rootPassword=${{ secrets.DB_PASSWORD }}
-          --set service.port=${{ secrets.DB_PORT }}
-      - name: MongoDB client container creation
-        run: |
-          kubectl run --namespace default mongodb-client --rm --tty -i --restart='Never' --env="MONGODB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD" --image docker.io/bitnami/mongodb:5.0.6-debian-10-r10 --command -- bash
-          mongo admin --host "mongodb-0.mongodb-headless.default.svc.cluster.local:${{ secrets.DB_PORT }},mongodb-1.mongodb-headless.default.svc.cluster.local:${{ secrets.DB_PORT }}" --authenticationDatabase admin -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_PASSWORD }}
-
   bulker-deploy-job:
     runs-on: ubuntu-20.04
-    needs: [package-job, mongodb-deploy-job]
+    needs: [package-job]
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout code
