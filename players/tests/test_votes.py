@@ -101,7 +101,7 @@ class PlayerVotedByTest(TestCase):
         self.assertEqual(response['tres'].status_code, status.HTTP_200_OK)
         self.assertEqual(response['tres'].data['name'], self.uno.name)
         self.assertEqual(response['quatro'].status_code, status.HTTP_204_NO_CONTENT)
-        
+
     def test_votedfor_get_invalid(self):
         response = client.get(
             reverse('Players:player_voted_for', kwargs={'pk': '6b016083-77a5-4455-b318-ad70c97f2353'})
@@ -124,9 +124,44 @@ class PlayerVotedByTest(TestCase):
             reverse('Players:player_voted_for', kwargs={'pk': self.quatro.pk})
         )
         self.assertEqual(response_quatro.status_code, status.HTTP_204_NO_CONTENT)
-        
+
     def test_votedfor_delete_invalid(self):
         response_uno = client.delete(
             reverse('Players:player_voted_for', kwargs={'pk': '6b016083-77a5-4455-b318-ad70c97f2353'})
         )
         self.assertEqual(response_uno.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_votefor_put_valid(self):
+        voterid = self.tres.pk
+        voteobjectid = self.dos.pk
+        response = client.put(
+            reverse('Players:player_vote_for', kwargs={
+                'objpk': voteobjectid,
+                'subjpk': voterid
+            })
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['votespree']), 2)
+        self.assertTrue(voterid in response.data['votespree'])
+
+    def test_votefor_put_invalid_object(self):
+        voterid = self.tres.pk
+        voteobjectid = '6b016083-77a5-4455-b318-ad70c97f2353'
+        response = client.put(
+            reverse('Players:player_vote_for', kwargs={
+                'objpk': voteobjectid,
+                'subjpk': voterid
+            })
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_votefor_put_invalid_subject(self):
+        voterid = '6b016083-77a5-4455-b318-ad70c97f2353'
+        voteobjectid = self.dos.pk
+        response = client.put(
+            reverse('Players:player_vote_for', kwargs={
+                'objpk': voteobjectid,
+                'subjpk': voterid
+            })
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

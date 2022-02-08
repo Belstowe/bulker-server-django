@@ -157,7 +157,7 @@ class PlayerVotedFor(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         object_record = subject_record.votedfor
-        
+
         if object_record is None:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
