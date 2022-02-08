@@ -117,6 +117,10 @@ jobs:
           --set auth.rootUser=${{ secrets.DB_USER }}
           --set auth.rootPassword=${{ secrets.DB_PASSWORD }}
           --set service.port=${{ secrets.DB_PORT }}
+      - name: MongoDB client container creation
+        run: |
+          kubectl run --namespace default mongodb-client --rm --tty -i --restart='Never' --env="MONGODB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD" --image docker.io/bitnami/mongodb:5.0.6-debian-10-r10 --command -- bash
+          mongo admin --host "mongodb-0.mongodb-headless.default.svc.cluster.local:${{ secrets.DB_PORT }},mongodb-1.mongodb-headless.default.svc.cluster.local:${{ secrets.DB_PORT }}" --authenticationDatabase admin -u ${{ secrets.DB_USER }} -p ${{ secrets.DB_PASSWORD }}
 
   bulker-deploy-job:
     runs-on: ubuntu-20.04
@@ -144,10 +148,6 @@ jobs:
       - name: Connect to Kubernetes cluster
         run: |
           gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GKE_PROJECT }}
-      - name: Obtain MongoDB service's hostname
-        run: |
-          echo "::set-output name=DB_HOST::$(kubectl get -o yaml svc mongodb | grep clusterIP: | awk '{print $2}')"
-        id: db-host
       - name: Helm Deploy
         run: >
           helm upgrade
@@ -155,7 +155,7 @@ jobs:
           --set image=${{ steps.repo.outputs.repo_name }}
           --set user=${{ secrets.DB_USER }}
           --set password=${{ secrets.DB_PASSWORD }}
-          --set host=${{ steps.db-host.outputs.DB_HOST }}
+          --set host=${{ secrets.DB_HOST }}
           --set port=${{ secrets.DB_PORT }}
           --set name=${{ secrets.DB_NAME }}
           --wait
