@@ -12,6 +12,7 @@ ENV PYTHONUNBUFFERED=1
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
+RUN python -m pip install gunicorn==20.1.0
 
 WORKDIR /bulker-django-backend
 COPY . /bulker-django-backend
@@ -22,6 +23,6 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bulker.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bulker.wsgi"]
 # CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

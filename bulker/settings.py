@@ -14,6 +14,7 @@ from pathlib import Path
 from os import environ
 from os.path import join, dirname
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,7 +32,13 @@ SECRET_KEY = environ.get('DJANGO_SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = environ.get('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = [environ.get('HOST', 'localhost')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+APPENGINE_URL = environ.get("APPENGINE_URL", default=None)
+if APPENGINE_URL:
+    APPENGINE_URL = urlparse(APPENGINE_URL, "https").geturl()
+    ALLOWED_HOSTS.append(APPENGINE_URL)
+    CSRF_TRUSTED_ORIGINS = [urlparse(APPENGINE_URL).netloc]
+    SECURE_SSL_REDIRECT = True
 
 # Application definition
 

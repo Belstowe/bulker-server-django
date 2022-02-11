@@ -135,7 +135,7 @@ jobs:
           --set db_host=${{ secrets.DB_HOST }}
           --set-string db_port=${{ secrets.DB_PORT }}
           --set db_name=${{ secrets.DB_NAME }}
-          --set host=${{ secrets.GKE_SERVICE_ADDRESS }}
+          --set host=${{ secrets.APPENGINE_URL }}
           --wait
           --atomic
           bulker-django-backend
