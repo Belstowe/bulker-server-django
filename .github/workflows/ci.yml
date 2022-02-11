@@ -75,16 +75,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Login to the container registry
+        uses: docker/login-action@v1.12.0
+        with:
+          registry: gcr.io
+          username: _json_key
+          password: ${{ secrets.GKE_PASSWORD }}
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: gcr.io/${{ secrets.GKE_PROJECT }}/bulker-django-backend
+          tags: type=sha
       - name: Build & Publish Image
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         env:
           app_name: bulker-django-backend
         with:
-          username: _json_key
-          password: ${{ secrets.GKE_PASSWORD }}
-          registry: gcr.io
-          repository: ${{ secrets.GKE_PROJECT }}/bulker-django-backend
-          tag_with_sha: true
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   bulker-deploy-job:
     runs-on: ubuntu-20.04
@@ -93,12 +104,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - id: 'auth'
+        uses: google-github-actions/auth@v0.6.0
+        with:
+          credentials_json: ${{ secrets.GKE_PASSWORD }}
       - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v0.5.0
         with:
           version: '371.0.0'
-          service_account_email: ${{ secrets.GKE_EMAIL }}
-          service_account_key: ${{ secrets.GKE_PASSWORD }}
       - name: Set Repo Location
         id: repo
         run: echo "::set-output name=repo_name::gcr.io/${{secrets.GKE_PROJECT}}/bulker-django-backend:sha-$(git rev-parse --short HEAD)"
