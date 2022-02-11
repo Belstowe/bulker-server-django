@@ -130,11 +130,12 @@ jobs:
           helm upgrade
           --install
           --set image=${{ steps.repo.outputs.repo_name }}
-          --set user=${{ secrets.DB_USER }}
-          --set password=${{ secrets.DB_PASSWORD }}
-          --set host=${{ secrets.DB_HOST }}
-          --set-string port=${{ secrets.DB_PORT }}
-          --set name=${{ secrets.DB_NAME }}
+          --set db_user=${{ secrets.DB_USER }}
+          --set db_password=${{ secrets.DB_PASSWORD }}
+          --set db_host=${{ secrets.DB_HOST }}
+          --set-string db_port=${{ secrets.DB_PORT }}
+          --set db_name=${{ secrets.DB_NAME }}
+          --set host=${{ secrets.GKE_SERVICE_ADDRESS }}
           --wait
           --atomic
           bulker-django-backend

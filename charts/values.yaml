@@ -1,6 +1,7 @@
 image: custom-value
-user: custom-value
-password: custom-value
+db_user: custom-value
+db_password: custom-value
+db_host: custom-value
+db_port: custom-value
+db_name: custom-value
 host: custom-value
-port: custom-value
-name: custom-value

@@ -23,37 +23,42 @@ spec:
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  key: user
+                  key: db-user
                   name: appsecrets
             - name: MONGO_INITDB_ROOT_USERNAME
               valueFrom:
                 secretKeyRef:
-                  key: user
+                  key: db-user
                   name: appsecrets
             - name: DB_NAME
               valueFrom:
                 secretKeyRef:
-                  key: name
+                  key: db-name
                   name: appsecrets
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: password
+                  key: db-password
                   name: appsecrets
             - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: password
+                  key: db-password
                   name: appsecrets
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:
-                  key: host
+                  key: db-host
                   name: appsecrets
             - name: DB_PORT
               valueFrom:
                 secretKeyRef:
-                  key: port
+                  key: db-port
+                  name: appsecrets
+            - name: HOST
+              valueFrom:
+                secretKeyRef:
+                  key: host
                   name: appsecrets
           ports:
             - containerPort: 8000
