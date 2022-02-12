@@ -1,4 +1,4 @@
-name: Django CI Workflow
+name: Django CI/CD Workflow
 
 # Triggers that workflow on such occasions, as pull request/push to master/develop
 on:
@@ -136,6 +136,7 @@ jobs:
           --set-string db_port=${{ secrets.DB_PORT }}
           --set db_name=${{ secrets.DB_NAME }}
           --set host=${{ secrets.APPENGINE_URL }}
+          --set secret_key=${{ secrets.DJANGO_SECRET_KEY }}
           --wait
           --atomic
           bulker-django-backend

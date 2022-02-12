@@ -60,5 +60,10 @@ spec:
                 secretKeyRef:
                   key: host
                   name: appsecrets
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: secret-key
+                  name: appsecrets
           ports:
             - containerPort: 8000
