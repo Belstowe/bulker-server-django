@@ -12,15 +12,17 @@ ENV PYTHONUNBUFFERED=1
 # Install pip requirements
 COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
+RUN python -m pip install gunicorn==20.1.0
 
-WORKDIR /app
-COPY . /app
+WORKDIR /bulker-django-backend
+COPY . /bulker-django-backend
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /bulker-django-backend
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bulker.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bulker.wsgi"]
 # CMD ["python", "manage.py", "runserver", "127.0.0.1:8000"]
+# CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

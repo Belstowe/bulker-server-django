@@ -14,14 +14,16 @@ from pathlib import Path
 from os import environ
 from os.path import join, dirname
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Read env vars from file
 dotenv_path = join(dirname(__file__), '../.env')
+django_dotenv_path = join(dirname(__file__), '../django.env')
 load_dotenv(dotenv_path)
-
+load_dotenv(django_dotenv_path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -31,7 +33,13 @@ SECRET_KEY = environ.get('DJANGO_SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = environ.get('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = [environ.get('HOST', 'localhost')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+APPENGINE_URL = environ.get("APPENGINE_URL", default=None)
+if APPENGINE_URL:
+    APPENGINE_URL = urlparse(APPENGINE_URL, "https").geturl()
+    ALLOWED_HOSTS.append(APPENGINE_URL)
+    CSRF_TRUSTED_ORIGINS = [urlparse(APPENGINE_URL).netloc]
+    SECURE_SSL_REDIRECT = True
 
 # Application definition
 
@@ -83,15 +91,17 @@ WSGI_APPLICATION = 'bulker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': environ.get('DB_NAME', 'db-bulker'),
+        'NAME': environ.get('MONGO_INITDB_DATABASE', 'db-bulker'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb://{username}:{password}@{hostname}:{port}'.format(
-                username=environ.get('MONGO_INITDB_ROOT_USERNAME', 'user'),
-                password=environ.get('MONGO_INITDB_ROOT_PASSWORD', 'password'),
+                username=environ.get('DB_USERNAME', 'user'),
+                password=environ.get('DB_PASSWORD', 'password'),
                 hostname=environ.get('DB_HOST', 'localhost'),
                 port=environ.get('DB_PORT', '27017')
-            )
+            ),
+            'authSource': environ.get('MONGO_INITDB_DATABASE', 'db-bulker'),
+            'authMechanism': 'SCRAM-SHA-1'
         }
     }
 }

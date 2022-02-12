@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulker-server
+  labels:
+    domain: bulker-django-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      domain: bulker-django-backend
+  template:
+    metadata:
+      name: app-template
+      labels:
+        domain: bulker-django-backend
+    spec:
+      containers:
+        - name: bulker-django-backend-image
+          image: {{.Values.image}}
+          imagePullPolicy: Always
+          env:
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: db-user
+                  name: appsecrets
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: db-user
+                  name: appsecrets
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: db-name
+                  name: appsecrets
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: appsecrets
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: db-password
+                  name: appsecrets
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: db-host
+                  name: appsecrets
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: db-port
+                  name: appsecrets
+            - name: HOST
+              valueFrom:
+                secretKeyRef:
+                  key: host
+                  name: appsecrets
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: secret-key
+                  name: appsecrets
+          ports:
+            - containerPort: 8000

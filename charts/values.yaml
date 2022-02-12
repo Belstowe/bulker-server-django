@@ -1,0 +1,8 @@
+image: custom-value
+db_user: custom-value
+db_password: custom-value
+db_host: custom-value
+db_port: custom-value
+db_name: custom-value
+host: custom-value
+secret_key: custom-value

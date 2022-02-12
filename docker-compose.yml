@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: bulker
+    image: bulker-django-backend
     volumes:
       - .:/code
     depends_on:
@@ -12,10 +12,10 @@ services:
       - DJANGO_DEBUG=False
     env_file:
       - .env
+      - django.env
     build:
       context: .
       dockerfile: ./Dockerfile
-    command: ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
     ports:
       - 8000:8000
 
@@ -23,5 +23,7 @@ services:
     image: mongo:5.0.6
     volumes:
       - ./data/db:/var/lib/mongodb/data
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     env_file:
       - .env
+      - mongo.env
