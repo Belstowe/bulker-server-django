@@ -21,8 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Read env vars from file
 dotenv_path = join(dirname(__file__), '../.env')
+django_dotenv_path = join(dirname(__file__), '../django.env')
 load_dotenv(dotenv_path)
-
+load_dotenv(django_dotenv_path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 

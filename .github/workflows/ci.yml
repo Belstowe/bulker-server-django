@@ -61,7 +61,7 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Configure '.env' file
         run: |
-          echo -e "MONGO_INITDB_ROOT_USERNAME=mongoadmin\nMONGO_INITDB_ROOT_PASSWORD=Password-To-Pass" > .env
+          echo -e "MONGO_INITDB_DATABASE=admin\nDB_USERNAME=mongoadmin\nDB_PASSWORD=Password-To-Pass" > .env
           python confenv.py False
       - name: Run migrations
         run: python manage.py migrate
