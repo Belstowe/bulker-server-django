@@ -12,6 +12,7 @@ services:
       - DJANGO_DEBUG=False
     env_file:
       - .env
+      - django.env
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -22,5 +23,7 @@ services:
     image: mongo:5.0.6
     volumes:
       - ./data/db:/var/lib/mongodb/data
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     env_file:
       - .env
+      - mongo.env

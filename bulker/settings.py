@@ -90,15 +90,17 @@ WSGI_APPLICATION = 'bulker.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': environ.get('DB_NAME', 'db-bulker'),
+        'NAME': environ.get('MONGO_INITDB_DATABASE', 'db-bulker'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
             'host': 'mongodb://{username}:{password}@{hostname}:{port}'.format(
-                username=environ.get('MONGO_INITDB_ROOT_USERNAME', 'user'),
-                password=environ.get('MONGO_INITDB_ROOT_PASSWORD', 'password'),
+                username=environ.get('DB_USERNAME', 'user'),
+                password=environ.get('DB_PASSWORD', 'password'),
                 hostname=environ.get('DB_HOST', 'localhost'),
                 port=environ.get('DB_PORT', '27017')
-            )
+            ),
+            'authSource': environ.get('MONGO_INITDB_DATABASE', 'db-bulker'),
+            'authMechanism': 'SCRAM-SHA-1'
         }
     }
 }

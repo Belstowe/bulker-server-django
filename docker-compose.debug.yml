@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: bulker
+    image: bulker-django-backend
     volumes:
       - .:/code
     depends_on:
@@ -12,6 +12,7 @@ services:
       - DJANGO_DEBUG=True
     env_file:
       - .env
+      - django.env
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -24,5 +25,7 @@ services:
     image: mongo:5.0.6
     volumes:
       - ./data/db:/var/lib/mongodb/data
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     env_file:
       - .env
+      - mongo.env

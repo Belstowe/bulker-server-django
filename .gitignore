@@ -112,7 +112,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+*.env
 .venv
 env/
 venv/
@@ -149,6 +149,7 @@ cython_debug/
 
 # MongoDB
 /data/db
+/mongo-init.js
 
 # Visual Studio Code
 .vscode/
