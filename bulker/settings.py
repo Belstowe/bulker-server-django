@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 from os import environ
-from os.path import join, dirname
+from os.path import join, dirname, abspath
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 
@@ -141,7 +141,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = (
+    join(BASE_DIR, 'assets'),
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
