@@ -1,10 +1,10 @@
 version: '3.7'
 
 services:
-  app:
+  bulker:
     image: bulker-django-backend
     volumes:
-      - .:/code
+      - static_volume:/bulker-django-backend/static
     depends_on:
       - mongodb
     environment:
@@ -16,8 +16,9 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    ports:
-      - 8000:8000
+    networks:
+      - db_network
+      - nginx_network
 
   mongodb:
     image: mongo:5.0.6
@@ -27,3 +28,30 @@ services:
     env_file:
       - .env
       - mongo.env
+    networks:
+      - db_network
+
+  nginx:
+    image: nginx:1.21-alpine
+    volumes:
+      - type: bind
+        source: ./nginx/conf.d
+        target: /etc/nginx/conf.d
+        read_only: true
+      - static_volume:/bulker-django-backend/static
+    ports:
+      - 8080:80
+    depends_on:
+      - bulker
+    networks:
+      - nginx_network
+
+volumes:
+  static_volume:
+
+networks:
+  nginx_network:
+    driver: bridge
+
+  db_network:
+    driver: bridge
